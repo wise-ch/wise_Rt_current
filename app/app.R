@@ -23,16 +23,23 @@ ui <- fluidPage(
       ),
     selectInput(
       "wwtp", label = "Wastewater treatment plant", multiple = TRUE,
-      selected = c("ARA Werdhoelzli", "STEP Aire", "ARA Region Bern"),
+      selected = c("ARA Werdhoelzli", "STEP Aire"),
       choices = available_wwtps
       )
     ),
   textOutput("data_timestamp"),
-  plotOutput("Rplot")
+  plotOutput("Rplot"),
+  tags$head(tags$style("#data_timestamp{
+                                 font-size: 10px;
+                                 font-style: italic;
+                                 }"
+  )
+  )
 )
 server <- function(input, output, session) {
   output$data_timestamp <- renderText(
-    paste("Last data query:", max(R_reports$data_timestamp, na.rm = TRUE))
+    paste("Last data query:", max(R_reports$data_timestamp, na.rm = TRUE),
+          " | ", "Data until:", max(R_reports$date, na.rm = TRUE))
   )
   
   output$Rplot <- renderPlot({
@@ -69,8 +76,14 @@ server <- function(input, output, session) {
       scale_fill_manual(values = approach_colors[input$approaches]) + 
       scale_color_manual(values = approach_colors[input$approaches])
   }, height = function() {
-    if(length(input$wwtp) > 3) {
-      90 + length(input$wwtp) * 100
+    n_wwtps <- R_reports |> 
+      filter(wastewater_treatment_plant.name %in% input$wwtp) |> 
+      filter(target %in% input$target) |> 
+      filter(approach %in% input$approaches) |> 
+      distinct(wastewater_treatment_plant.name) |> 
+      nrow()
+    if(n_wwtps > 3) {
+      90 + n_wwtps * 100
     } else {
         "auto"
       }
