@@ -9,6 +9,6 @@ if (!require("ggplot2")){
 }
 
 shiny::runGitHub(
-  "wise-ch/wise_Rt_dashboard_internal", ref = "refs/heads/main", subdir = "app",
+  "wise-ch/wise_Rt_current", ref = "refs/heads/main", subdir = "app",
   launch.browser = TRUE
   )
