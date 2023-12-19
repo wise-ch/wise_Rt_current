@@ -27,13 +27,18 @@ ui <- fluidPage(
       choices = available_wwtps
       )
     ),
+  textOutput("data_timestamp"),
   plotOutput("Rplot")
 )
 server <- function(input, output, session) {
+  output$data_timestamp <- renderText(
+    paste("Last data query:", max(R_reports$data_timestamp, na.rm = TRUE))
+  )
+  
   output$Rplot <- renderPlot({
     data_to_plot <- R_reports |> 
-      #filter(wastewater_treatment_plant.name == input$wwtp) |> 
-      filter(target == input$target) |> 
+      filter(wastewater_treatment_plant.name %in% input$wwtp) |> 
+      filter(target %in% input$target) |> 
       filter(approach %in% input$approaches)
     
     ymin <- min(0.8, max(quantile(data_to_plot$lower_outer, probs = 0.01), 0.1))
@@ -63,6 +68,12 @@ server <- function(input, output, session) {
       geom_line(aes(y = mean, color = approach)) +
       scale_fill_manual(values = approach_colors[input$approaches]) + 
       scale_color_manual(values = approach_colors[input$approaches])
-  })
+  }, height = function() {
+    if(length(input$wwtp) > 3) {
+      90 + length(input$wwtp) * 100
+    } else {
+        "auto"
+      }
+    })
 }
 shinyApp(ui, server)
