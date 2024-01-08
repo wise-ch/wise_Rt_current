@@ -5,7 +5,7 @@ library(ggplot2)
 available_approaches <- c("estimateR", "EpiSewer")
 approach_colors <- c(estimateR = "#E64B35FF", EpiSewer = "#4DBBD5FF")
 
-R_reports <- readRDS("../data/R_estimates.rds") |> 
+R_reports <- readRDS("data/R_estimates.rds") |> 
   mutate(approach = factor(approach, levels = available_approaches, ordered = TRUE))
 
 available_wwtps <- c(unique(R_reports$wastewater_treatment_plant.name))
