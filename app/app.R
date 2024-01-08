@@ -23,7 +23,7 @@ ui <- fluidPage(
       ),
     selectInput(
       "wwtp", label = "Wastewater treatment plant", multiple = TRUE,
-      selected = c("ARA Werdhoelzli", "STEP Aire"),
+      selected = c("ARA Werdhoelzli", "ARA Region Bern", "STEP Aire"),
       choices = available_wwtps
       )
     ),
